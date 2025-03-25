@@ -1,16 +1,31 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import ControlsCard from "./components/Controlscard";
 import Sidebar from "./components/Sidebar";
 
 function App() {
   const sceneRef = useRef(new THREE.Scene());
-  const cameraRef = useRef(new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000));
-  const rendererRef = useRef(new THREE.WebGLRenderer());
+  const cameraRef = useRef(
+    new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+  );
+  const rendererRef = useRef(new THREE.WebGLRenderer({ antialias: true }));
+  const controlsRef = useRef(null);
   const selectedObjectRef = useRef(null);
-  const [furnitureObjects, setFurnitureObjects] = useState([]);
+  const captureScreenshot = () => {
+    const renderer = rendererRef.current;
+    if (!renderer) return;
+
+    // Ensure the latest frame is rendered before taking a screenshot
+    renderer.render(sceneRef.current, cameraRef.current);
+
+    // Convert the WebGL canvas to an image
+    const link = document.createElement("a");
+    link.href = renderer.domElement.toDataURL("image/png");
+    link.download = "scene_screenshot.png";
+    link.click();
+  };
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -18,130 +33,172 @@ function App() {
     const renderer = rendererRef.current;
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x808080);
+    renderer.setClearColor(0xfffffff);
     document.body.appendChild(renderer.domElement);
 
     camera.position.set(0, 5, 15);
+
+    // Add OrbitControls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
+    controls.dampingFactor = 0.1;
     controls.screenSpacePanning = true;
-    controls.maxPolarAngle = Math.PI / 2;
+    controls.minDistance = 5;
+    controls.maxDistance = 50;
+    controlsRef.current = controls;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+    // Add lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
     directionalLight.position.set(10, 10, 5);
     scene.add(directionalLight);
 
-    const objLoader = new OBJLoader();
-    const mtlLoader = new MTLLoader();
-    mtlLoader.load("/models/JAIMEx.mtl", (materials) => {
-      materials.preload();
-      objLoader.setMaterials(materials);
-      objLoader.load("/models/JAIMEx.obj", (object) => {
-        object.position.set(0, -1, 0);
-        object.scale.set(0.1, 0.1, 0.1);
-        object.name = "room_layout";
-        scene.add(object);
-      });
-    });
+    // Load layout model
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load(
+      "/models/Layout.glb",
+      (gltf) => {
+        const model = gltf.scene;
+        model.position.set(0, -1, 0);
+        model.scale.set(1, 1, 1);
+        model.name = "room_layout";
+        scene.add(model);
+      },
+      undefined,
+      (error) => console.error("Error loading GLB model:", error)
+    );
 
-    const onKeyDown = (event) => {
+    /** 🔄 Handle Keyboard Movement */
+    const handleKeydown = (event) => {
       const selectedObject = selectedObjectRef.current;
-      if (selectedObject) {
-        const { key } = event;
-        switch (key) {
-          case "w": selectedObject.position.z -= 0.07; break;
-          case "a": selectedObject.position.x -= 0.07; break;
-          case "s": selectedObject.position.z += 0.07; break;
-          case "d": selectedObject.position.x += 0.07; break;
-          case "e": selectedObject.position.y -= 0.07; break;
-          case "q": selectedObject.position.y += 0.07; break;
-          case "+": selectedObject.scale.x += 0.01; selectedObject.scale.y += 0.01; selectedObject.scale.z += 0.01; break;
-          case "-": selectedObject.scale.x = Math.max(0.1, selectedObject.scale.x - 0.01); selectedObject.scale.y = Math.max(0.01, selectedObject.scale.y - 0.01); selectedObject.scale.z = Math.max(0.01, selectedObject.scale.z - 0.01); break;
-          case "r": selectedObject.rotation.y += Math.PI / 20; break;
-          case "f": selectedObject.rotation.y -= Math.PI / 20; break;
-          default: break;
-        }
+      if (!selectedObject) return;
+
+      const sizeSpeed = 0.1;
+      const moveSpeed = 0.1;
+
+      switch (event.key) {
+        case "w": // Move forward (Z+)
+          selectedObject.position.z -= moveSpeed;
+          break;
+        case "s": // Move backward (Z-)
+          selectedObject.position.z += moveSpeed;
+          break;
+        case "a": // Move left (X-)
+          selectedObject.position.x -= moveSpeed;
+          break;
+        case "d": // Move right (X+)
+          selectedObject.position.x += moveSpeed;
+          break;
+        case "e": // Move up (Y+)
+          selectedObject.position.y += moveSpeed;
+          break;
+        case "q": // Move down (Y-)
+          selectedObject.position.y -= moveSpeed;
+          break;
+        case "+": // Increase size
+          selectedObject.scale.multiplyScalar(1 + sizeSpeed);
+          break;
+        case "-": // Decrease size
+          selectedObject.scale.multiplyScalar(1 - sizeSpeed);
+          break;
+        case "r": // Rotate clockwise
+          selectedObject.rotation.y -= Math.PI / 30;
+          break;
+        case "f": // Rotate counterclockwise
+          selectedObject.rotation.y += Math.PI / 30;
+          break;
+        case "Delete":
+        case "Backspace": // 🚀 Delete selected object
+          if (selectedObject.parent) {
+            selectedObject.parent.remove(selectedObject); // Remove from scene
+            selectedObjectRef.current = null; // Deselect object
+          }
+          break;
+        default:
+          break;
       }
     };
 
-    window.addEventListener("keydown", onKeyDown);
+
+    /** 🖱 Handle Mouse Click (Select Object) */
+    const onMouseDown = (event) => {
+      const mouse = new THREE.Vector2(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1
+      );
+
+      const raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      if (intersects.length > 0) {
+        let selectedObject = intersects[0].object;
+        while (selectedObject.parent && selectedObject.parent !== scene) {
+          selectedObject = selectedObject.parent;
+        }
+
+        if (selectedObject.userData.isMovable) {
+          selectedObjectRef.current = selectedObject;
+        }
+      } else {
+        selectedObjectRef.current = null;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+    renderer.domElement.addEventListener("mousedown", onMouseDown);
 
     const animate = () => {
       requestAnimationFrame(animate);
-      controls.update();
+      controlsRef.current.update();
       renderer.render(scene, camera);
     };
     animate();
 
     const handleResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      camera.aspect = width / height;
+      camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
+      renderer.setSize(window.innerWidth, window.innerHeight);
     };
 
     window.addEventListener("resize", handleResize);
 
     return () => {
       renderer.dispose();
-      controls.dispose();
-      window.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keydown", handleKeydown);
+      renderer.domElement.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
+  /** ➕ Function to Add Furniture */
   const addFurniture = (modelPath) => {
     const scene = sceneRef.current;
     if (!scene) return;
 
-    const loader = new OBJLoader();
-    loader.load(
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load(
       modelPath,
-      (object) => {
-        object.position.set(Math.random() * 5, 1, Math.random() * 5);
+      (gltf) => {
+        const object = gltf.scene;
+        object.position.set(Math.random() * 5, 0, Math.random() * 5);
+        object.scale.set(1, 1, 1);
+        object.rotation.y = Math.random() * Math.PI * 2;
+        object.userData.isMovable = true; // Mark as movable
         scene.add(object);
-        selectedObjectRef.current = object;
-        setFurnitureObjects((prevObjects) => [...prevObjects, object]);
       },
       undefined,
-      (error) => console.error("Failed to load model:", error)
+      (error) => console.error("Failed to load GLB model:", error)
     );
-  };
-
-  const exportImage = () => {
-    const canvas = rendererRef.current.domElement; // Get the WebGL canvas element
-    const dataURL = canvas.toDataURL("image/png"); // Capture the canvas as a base64 image
-
-    const link = document.createElement("a"); // Create a temporary link element
-    link.href = dataURL; // Set the href to the captured image data
-    link.download = "scene_image.png"; // Set the download filename
-    link.click(); // Simulate a click to download the image
   };
 
   return (
     <>
-      <Sidebar onAddFurniture={addFurniture} />
-      <button
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "20px",
-          padding: "10px 20px",
-          backgroundColor: "blue",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-        }}
-        onClick={exportImage}
-      >
-        Export Image
-      </button>
+      <Sidebar onAddFurniture={addFurniture} onCaptureScreenshot={captureScreenshot} />
 
+      <ControlsCard />
     </>
   );
 }
