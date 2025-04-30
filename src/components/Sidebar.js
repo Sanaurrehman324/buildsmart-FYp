@@ -1,26 +1,27 @@
 import html2canvas from "html2canvas";
 import React, { useState } from "react";
-import { FaBars, FaBed, FaChair, FaCouch, FaKitchenSet, FaLeaf, FaTable, FaTv, FaWarehouse } from "react-icons/fa6";
+import {
+    FaBars, FaBed, FaChair, FaCouch, FaKitchenSet,
+    FaLeaf, FaTable, FaTv
+} from "react-icons/fa6";
 import { FiDownload } from "react-icons/fi";
 
 const furnitureItems = [
-    { name: "Sofa", path: "/models/sillon.glb", icon: <FaCouch /> },
-    { name: "Dining Table", path: "/models/Dinning.glb", icon: <FaTable /> },
-    { name: "Bed", path: "/models/king_bed.glb", icon: <FaBed /> },
-    { name: "Chair", path: "/models/furniture_sofa.glb", icon: <FaChair /> },
-    { name: "Cupboard", path: "/models/cupboard.glb", icon: <FaWarehouse /> },
-    { name: "Planter", path: "/models/Planter.glb", icon: <FaLeaf /> },
-    { name: "Kitchen", path: "/models/Kitchen.glb", icon: <FaKitchenSet /> },
-    { name: "3 Seater Sofa", path: "/models/3Sofa.glb", icon: <FaCouch /> },
-    { name: "Tv-Console", path: "/models/Tv-Console.glb", icon: <FaTv /> },
+    { name: "Sofa", path: "/models/sillon.glb", icon: <FaCouch />, dimensions: { length: 200, width: 90, height: 85 } },
+    { name: "Dining Table", path: "/models/Dinning.glb", icon: <FaTable />, dimensions: { length: 180, width: 90, height: 75 } },
+    { name: "Bed", path: "/models/king_bed.glb", icon: <FaBed />, dimensions: { length: 210, width: 190, height: 100 } },
+    { name: "Chair", path: "/models/furniture_sofa.glb", icon: <FaChair />, dimensions: { length: 60, width: 60, height: 90 } },
+    { name: "Planter", path: "/models/Planter.glb", icon: <FaLeaf />, dimensions: { length: 30, width: 30, height: 60 } },
+    { name: "Kitchen", path: "/models/Kitchen.glb", icon: <FaKitchenSet />, dimensions: { length: 240, width: 60, height: 90 } },
+    { name: "3 Seater Sofa", path: "/models/3Sofa.glb", icon: <FaCouch />, dimensions: { length: 220, width: 95, height: 85 } },
+    { name: "Tv-Console", path: "/models/Tv-Console.glb", icon: <FaTv />, dimensions: { length: 160, width: 45, height: 55 } },
 ];
 
 const Sidebar = ({ onAddFurniture, onCaptureScreenshot }) => {
     const [isOpen, setIsOpen] = useState(true);
 
-    // Function to capture screenshot
     const captureScreenshot = () => {
-        const targetElement = document.getElementById("canvas-container"); // Target the 3D scene container
+        const targetElement = document.getElementById("canvas-container");
         if (!targetElement) return;
 
         html2canvas(targetElement, { useCORS: true }).then(canvas => {
@@ -47,13 +48,18 @@ const Sidebar = ({ onAddFurniture, onCaptureScreenshot }) => {
             {isOpen && (
                 <div style={styles.listContainer}>
                     {furnitureItems.map(item => (
-                        <button
-                            key={item.name}
-                            onClick={() => onAddFurniture(item.path)}
-                            style={styles.itemButton}
-                        >
-                            <span style={styles.icon}>{item.icon}</span> {item.name}
-                        </button>
+                        <div key={item.name} style={styles.itemWrapper}>
+                            <button
+                                onClick={() => onAddFurniture(item.path)}
+                                style={styles.itemButton}
+                            >
+                                <span style={styles.icon}>{item.icon}</span>
+                                {item.name}
+                            </button>
+                            <div style={styles.dimensions}>
+                                <span>📏 {item.dimensions.length} x {item.dimensions.width} x {item.dimensions.height} cm</span>
+                            </div>
+                        </div>
                     ))}
                 </div>
             )}
@@ -103,13 +109,17 @@ const styles = {
         cursor: "pointer"
     },
     listContainer: {
-        marginBottom: "20px"
+        marginBottom: "20px",
+        width: "100%"
+    },
+    itemWrapper: {
+        marginBottom: "10px"
     },
     itemButton: {
         display: "flex",
         alignItems: "center",
         gap: "10px",
-        margin: "10px 0",
+        margin: "5px 0",
         padding: "12px",
         width: "100%",
         backgroundColor: "#3498db",
@@ -123,6 +133,11 @@ const styles = {
     },
     icon: {
         fontSize: "20px"
+    },
+    dimensions: {
+        paddingLeft: "20px",
+        fontSize: "14px",
+        color: "#ddd"
     },
     exportButton: {
         position: "absolute",

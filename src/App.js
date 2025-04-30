@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import ControlsCard from "./components/Controlscard";
+import LayoutSidebar from "./components/LayoutSidebar";
 import Sidebar from "./components/Sidebar";
 
 function App() {
@@ -13,14 +14,11 @@ function App() {
   const rendererRef = useRef(new THREE.WebGLRenderer({ antialias: true }));
   const controlsRef = useRef(null);
   const selectedObjectRef = useRef(null);
+
   const captureScreenshot = () => {
     const renderer = rendererRef.current;
     if (!renderer) return;
-
-    // Ensure the latest frame is rendered before taking a screenshot
     renderer.render(sceneRef.current, cameraRef.current);
-
-    // Convert the WebGL canvas to an image
     const link = document.createElement("a");
     link.href = renderer.domElement.toDataURL("image/png");
     link.download = "scene_screenshot.png";
@@ -33,21 +31,24 @@ function App() {
     const renderer = rendererRef.current;
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0xfffffff);
+    renderer.setClearColor(0xffffff);
     document.body.appendChild(renderer.domElement);
 
     camera.position.set(0, 5, 15);
 
-    // Add OrbitControls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.1;
+    controls.dampingFactor = 0.25;
+    controls.rotateSpeed = 0.6;
+    controls.zoomSpeed = 0.8;
+    controls.panSpeed = 0.5;
     controls.screenSpacePanning = true;
+    controls.enablePan = true;
     controls.minDistance = 5;
     controls.maxDistance = 50;
     controlsRef.current = controls;
 
-    // Add lights
+
     const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambientLight);
 
@@ -55,22 +56,6 @@ function App() {
     directionalLight.position.set(10, 10, 5);
     scene.add(directionalLight);
 
-    // Load layout model
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.load(
-      "/models/Layout.glb",
-      (gltf) => {
-        const model = gltf.scene;
-        model.position.set(0, -1, 0);
-        model.scale.set(1, 1, 1);
-        model.name = "room_layout";
-        scene.add(model);
-      },
-      undefined,
-      (error) => console.error("Error loading GLB model:", error)
-    );
-
-    /** 🔄 Handle Keyboard Movement */
     const handleKeydown = (event) => {
       const selectedObject = selectedObjectRef.current;
       if (!selectedObject) return;
@@ -79,41 +64,41 @@ function App() {
       const moveSpeed = 0.1;
 
       switch (event.key) {
-        case "w": // Move forward (Z+)
+        case "w":
           selectedObject.position.z -= moveSpeed;
           break;
-        case "s": // Move backward (Z-)
+        case "s":
           selectedObject.position.z += moveSpeed;
           break;
-        case "a": // Move left (X-)
+        case "a":
           selectedObject.position.x -= moveSpeed;
           break;
-        case "d": // Move right (X+)
+        case "d":
           selectedObject.position.x += moveSpeed;
           break;
-        case "e": // Move up (Y+)
+        case "e":
           selectedObject.position.y += moveSpeed;
           break;
-        case "q": // Move down (Y-)
+        case "q":
           selectedObject.position.y -= moveSpeed;
           break;
-        case "+": // Increase size
+        case "+":
           selectedObject.scale.multiplyScalar(1 + sizeSpeed);
           break;
-        case "-": // Decrease size
+        case "-":
           selectedObject.scale.multiplyScalar(1 - sizeSpeed);
           break;
-        case "r": // Rotate clockwise
+        case "r":
           selectedObject.rotation.y -= Math.PI / 30;
           break;
-        case "f": // Rotate counterclockwise
+        case "f":
           selectedObject.rotation.y += Math.PI / 30;
           break;
         case "Delete":
-        case "Backspace": // 🚀 Delete selected object
+        case "Backspace":
           if (selectedObject.parent) {
-            selectedObject.parent.remove(selectedObject); // Remove from scene
-            selectedObjectRef.current = null; // Deselect object
+            selectedObject.parent.remove(selectedObject);
+            selectedObjectRef.current = null;
           }
           break;
         default:
@@ -121,14 +106,11 @@ function App() {
       }
     };
 
-
-    /** 🖱 Handle Mouse Click (Select Object) */
     const onMouseDown = (event) => {
       const mouse = new THREE.Vector2(
         (event.clientX / window.innerWidth) * 2 - 1,
         -(event.clientY / window.innerHeight) * 2 + 1
       );
-
       const raycaster = new THREE.Raycaster();
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(scene.children, true);
@@ -173,11 +155,9 @@ function App() {
     };
   }, []);
 
-  /** ➕ Function to Add Furniture */
+  /** ➕ Add Furniture Model */
   const addFurniture = (modelPath) => {
     const scene = sceneRef.current;
-    if (!scene) return;
-
     const gltfLoader = new GLTFLoader();
     gltfLoader.load(
       modelPath,
@@ -186,18 +166,40 @@ function App() {
         object.position.set(Math.random() * 5, 0, Math.random() * 5);
         object.scale.set(1, 1, 1);
         object.rotation.y = Math.random() * Math.PI * 2;
-        object.userData.isMovable = true; // Mark as movable
+        object.userData.isMovable = true;
         scene.add(object);
       },
       undefined,
-      (error) => console.error("Failed to load GLB model:", error)
+      (error) => console.error("Failed to load furniture model:", error)
+    );
+  };
+
+  /** 🏠 Select Layout from Sidebar */
+  const loadLayout = (modelPath) => {
+    const scene = sceneRef.current;
+    const gltfLoader = new GLTFLoader();
+
+    const oldLayout = scene.getObjectByName("room_layout");
+    if (oldLayout) scene.remove(oldLayout);
+
+    gltfLoader.load(
+      modelPath,
+      (gltf) => {
+        const model = gltf.scene;
+        model.name = "room_layout";
+        model.position.set(0, -1, 0);
+        model.scale.set(1, 1, 1);
+        scene.add(model);
+      },
+      undefined,
+      (error) => console.error("Failed to load layout:", error)
     );
   };
 
   return (
     <>
       <Sidebar onAddFurniture={addFurniture} onCaptureScreenshot={captureScreenshot} />
-
+      <LayoutSidebar onSelectLayout={loadLayout} />
       <ControlsCard />
     </>
   );
