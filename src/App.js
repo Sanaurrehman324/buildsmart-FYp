@@ -1,15 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import ControlsCard from "./components/Controlscard";
 import LayoutSidebar from "./components/LayoutSidebar";
 import Sidebar from "./components/Sidebar";
-
+import DimensionsCard from "./components/dimensionscard"; // ✅ import
 function App() {
   const sceneRef = useRef(new THREE.Scene());
   const cameraRef = useRef(
-    new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+    new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000)
   );
   const rendererRef = useRef(new THREE.WebGLRenderer({ antialias: true }));
   const controlsRef = useRef(null);
@@ -24,6 +24,23 @@ function App() {
     link.download = "scene_screenshot.png";
     link.click();
   };
+
+  const [dimensions, setDimensions] = useState(null);
+
+  const updateDimensions = (object) => {
+    const box = new THREE.Box3().setFromObject(object);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+
+    const metersToFeet = 3.28084;
+
+    setDimensions({
+      width: size.x * metersToFeet,
+      height: size.y * metersToFeet,
+      depth: size.z * metersToFeet,
+    });
+  };
+
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -65,33 +82,48 @@ function App() {
 
       switch (event.key) {
         case "w":
+        case "W":
+        case "ArrowUp":
           selectedObject.position.z -= moveSpeed;
           break;
         case "s":
+        case "S":
+        case "ArrowDown":
           selectedObject.position.z += moveSpeed;
           break;
         case "a":
+        case "A":
+        case "ArrowLeft":
           selectedObject.position.x -= moveSpeed;
           break;
         case "d":
+        case "D":
+        case "ArrowRight":
           selectedObject.position.x += moveSpeed;
           break;
         case "e":
+        case "E":
           selectedObject.position.y += moveSpeed;
           break;
         case "q":
+        case "Q":
           selectedObject.position.y -= moveSpeed;
           break;
+
         case "+":
           selectedObject.scale.multiplyScalar(1 + sizeSpeed);
+          updateDimensions(selectedObject); // ✅ update size
           break;
         case "-":
           selectedObject.scale.multiplyScalar(1 - sizeSpeed);
+          updateDimensions(selectedObject); // ✅ update size
           break;
         case "r":
+        case "R":
           selectedObject.rotation.y -= Math.PI / 30;
           break;
         case "f":
+        case "F":
           selectedObject.rotation.y += Math.PI / 30;
           break;
         case "Delete":
@@ -123,6 +155,10 @@ function App() {
 
         if (selectedObject.userData.isMovable) {
           selectedObjectRef.current = selectedObject;
+          updateDimensions(selectedObject); // ✅ update on selection
+        } else {
+          selectedObjectRef.current = null;
+          setDimensions(null);
         }
       } else {
         selectedObjectRef.current = null;
@@ -201,6 +237,7 @@ function App() {
       <Sidebar onAddFurniture={addFurniture} onCaptureScreenshot={captureScreenshot} />
       <LayoutSidebar onSelectLayout={loadLayout} />
       <ControlsCard />
+      <DimensionsCard dimensions={dimensions} />
     </>
   );
 }

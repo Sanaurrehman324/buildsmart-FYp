@@ -8,9 +8,9 @@ const ControlsCard = () => {
             <ul>
                 <li><strong>Camera Movement:</strong> Mouse (OrbitControls)</li>
                 <li><strong>Select Object:</strong> Click</li>
-                <li><strong>Move Object (X/Y):</strong> W/A/S/D</li>
-                <li><strong>Move Object (Z):</strong> Q/E</li>
-                <li><strong>Rotate Object:</strong> O/P</li>
+                <li><strong>Move Object (X/Y):</strong> W/A/S/D OR arrow keys</li>
+                <li><strong>Move Object Up/Down (Z):</strong> Q/E</li>
+                <li><strong>Rotate Object:</strong> r/f</li>
                 <li><strong>Scale Object:</strong> -/+</li>
             </ul>
         </div>

@@ -1,20 +1,35 @@
 import html2canvas from "html2canvas";
 import React, { useState } from "react";
 import {
-    FaBars, FaBed, FaChair, FaCouch, FaKitchenSet,
-    FaLeaf, FaTable, FaTv
+    FaBars, FaBath, FaBed, FaChair, FaCouch, FaKitchenSet,
+    FaLeaf, FaLightbulb, FaRug, FaTable, FaTv
 } from "react-icons/fa6";
 import { FiDownload } from "react-icons/fi";
 
 const furnitureItems = [
-    { name: "Sofa", path: "/models/sillon.glb", icon: <FaCouch />, dimensions: { length: 200, width: 90, height: 85 } },
-    { name: "Dining Table", path: "/models/Dinning.glb", icon: <FaTable />, dimensions: { length: 180, width: 90, height: 75 } },
-    { name: "Bed", path: "/models/king_bed.glb", icon: <FaBed />, dimensions: { length: 210, width: 190, height: 100 } },
-    { name: "Chair", path: "/models/furniture_sofa.glb", icon: <FaChair />, dimensions: { length: 60, width: 60, height: 90 } },
-    { name: "Planter", path: "/models/Planter.glb", icon: <FaLeaf />, dimensions: { length: 30, width: 30, height: 60 } },
-    { name: "Kitchen", path: "/models/Kitchen.glb", icon: <FaKitchenSet />, dimensions: { length: 240, width: 60, height: 90 } },
-    { name: "3 Seater Sofa", path: "/models/3Sofa.glb", icon: <FaCouch />, dimensions: { length: 220, width: 95, height: 85 } },
-    { name: "Tv-Console", path: "/models/Tv-Console.glb", icon: <FaTv />, dimensions: { length: 160, width: 45, height: 55 } },
+    { name: "Bed", path: "/models/king_bed.glb", icon: <FaBed />, },
+    { name: "Wood-Bed", path: "/models/WoodenBed.glb", icon: <FaBed /> },
+    { name: "ModernBed", path: "/models/ModernBed.glb", icon: <FaBed /> },
+    { name: "Chandelier", path: "/models/Chandelier.glb", icon: <FaLightbulb /> },
+    { name: "Chandelier", path: "/models/Chandelier2.glb", icon: <FaLightbulb /> },
+    { name: "Chair", path: "/models/furniture_sofa.glb", icon: <FaChair />, },
+    { name: "Planter", path: "/models/Planter.glb", icon: <FaLeaf />, },
+    { name: "Kitchen", path: "/models/Kitchen.glb", icon: <FaKitchenSet />, },
+    { name: "3 Seater Sofa", path: "/models/3Sofa.glb", icon: <FaCouch />, },
+    { name: "Tv-Console", path: "/models/Tv-Console.glb", icon: <FaTv />, },
+    { name: "Pendant-Light", path: "/models/PendantLight.glb", icon: <FaLightbulb /> },
+    { name: "Sofa", path: "/models/SofaChair.glb", icon: <FaCouch /> },
+    { name: "Couch", path: "/models/Couch.glb", icon: <FaCouch /> },
+    { name: "SofaSet", path: "/models/SofaSet.glb", icon: <FaCouch /> },
+    { name: "CoffeeTable", path: "/models/CoffeeTable.glb", icon: <FaTable /> },
+    { name: "Table", path: "/models/Table.glb", icon: <FaTable /> },
+    { name: "Rug", path: "/models/Rug.glb", icon: <FaRug /> },
+    { name: "Curtain", path: "/models/Curtain.glb", icon: <FaRug /> },
+    { name: "Curtain2", path: "/models/Curtain2.glb", icon: <FaRug /> },
+    { name: "DinningTable", path: "/models/Dinning Table.glb", icon: <FaTable /> },
+    { name: "Dining Table", path: "/models/Dinning.glb", icon: <FaTable /> },
+    { name: "DressingTable", path: "/models/DressingTable.glb", icon: <FaTable /> },
+    { name: "Vanity", path: "/models/Vanity.glb", icon: <FaBath /> },
 ];
 
 const Sidebar = ({ onAddFurniture, onCaptureScreenshot }) => {
@@ -56,9 +71,7 @@ const Sidebar = ({ onAddFurniture, onCaptureScreenshot }) => {
                                 <span style={styles.icon}>{item.icon}</span>
                                 {item.name}
                             </button>
-                            <div style={styles.dimensions}>
-                                <span>📏 {item.dimensions.length} x {item.dimensions.width} x {item.dimensions.height} cm</span>
-                            </div>
+
                         </div>
                     ))}
                 </div>

@@ -25,7 +25,7 @@ const LayoutSidebar = ({ onSelectLayout }) => {
     return (
         <div className={`layout-sidebar ${isOpen ? "open" : "closed"}`}>
             <button className="toggle-btn" onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? "←" : "→"}
+                {isOpen ? "→" : "←"}
             </button>
 
             {isOpen && (
