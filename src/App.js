@@ -120,11 +120,11 @@ function App() {
           break;
         case "r":
         case "R":
-          selectedObject.rotation.y -= Math.PI / 30;
+          selectedObject.rotation.y -= Math.PI / 100;
           break;
         case "f":
         case "F":
-          selectedObject.rotation.y += Math.PI / 30;
+          selectedObject.rotation.y += Math.PI / 100;
           break;
         case "Delete":
         case "Backspace":

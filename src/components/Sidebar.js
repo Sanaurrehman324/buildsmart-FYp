@@ -1,4 +1,3 @@
-import html2canvas from "html2canvas";
 import React, { useState } from "react";
 import {
     FaBars, FaBath, FaBed, FaChair, FaCouch, FaKitchenSet,
@@ -7,16 +6,16 @@ import {
 import { FiDownload } from "react-icons/fi";
 
 const furnitureItems = [
-    { name: "Bed", path: "/models/king_bed.glb", icon: <FaBed />, },
+    { name: "Bed", path: "/models/king_bed.glb", icon: <FaBed /> },
     { name: "Wood-Bed", path: "/models/WoodenBed.glb", icon: <FaBed /> },
     { name: "ModernBed", path: "/models/ModernBed.glb", icon: <FaBed /> },
     { name: "Chandelier", path: "/models/Chandelier.glb", icon: <FaLightbulb /> },
-    { name: "Chandelier", path: "/models/Chandelier2.glb", icon: <FaLightbulb /> },
-    { name: "Chair", path: "/models/furniture_sofa.glb", icon: <FaChair />, },
-    { name: "Planter", path: "/models/Planter.glb", icon: <FaLeaf />, },
-    { name: "Kitchen", path: "/models/Kitchen.glb", icon: <FaKitchenSet />, },
-    { name: "3 Seater Sofa", path: "/models/3Sofa.glb", icon: <FaCouch />, },
-    { name: "Tv-Console", path: "/models/Tv-Console.glb", icon: <FaTv />, },
+    { name: "Chandelier2", path: "/models/Chandelier2.glb", icon: <FaLightbulb /> },
+    { name: "Chair", path: "/models/furniture_sofa.glb", icon: <FaChair /> },
+    { name: "Planter", path: "/models/Planter.glb", icon: <FaLeaf /> },
+    { name: "Kitchen", path: "/models/Kitchen.glb", icon: <FaKitchenSet /> },
+    { name: "3 Seater Sofa", path: "/models/3Sofa.glb", icon: <FaCouch /> },
+    { name: "Tv-Console", path: "/models/Tv-Console.glb", icon: <FaTv /> },
     { name: "Pendant-Light", path: "/models/PendantLight.glb", icon: <FaLightbulb /> },
     { name: "Sofa", path: "/models/SofaChair.glb", icon: <FaCouch /> },
     { name: "Couch", path: "/models/Couch.glb", icon: <FaCouch /> },
@@ -34,56 +33,52 @@ const furnitureItems = [
 
 const Sidebar = ({ onAddFurniture, onCaptureScreenshot }) => {
     const [isOpen, setIsOpen] = useState(true);
-
-    const captureScreenshot = () => {
-        const targetElement = document.getElementById("canvas-container");
-        if (!targetElement) return;
-
-        html2canvas(targetElement, { useCORS: true }).then(canvas => {
-            const link = document.createElement("a");
-            link.href = canvas.toDataURL("image/png");
-            link.download = "scene_screenshot.png";
-            link.click();
-        });
-    };
+    const [hovered, setHovered] = useState(null);
 
     return (
-        <div style={{
-            ...styles.sidebar,
-            width: isOpen ? "400px" : "60px",
-            padding: isOpen ? "20px" : "10px",
-            alignItems: isOpen ? "flex-start" : "center"
-        }}>
-            <button style={styles.toggleButton} onClick={() => setIsOpen(!isOpen)}>
-                <FaBars />
-            </button>
-
-            {isOpen && <h2 style={styles.title}>Furniture Library</h2>}
-
-            {isOpen && (
-                <div style={styles.listContainer}>
-                    {furnitureItems.map(item => (
-                        <div key={item.name} style={styles.itemWrapper}>
-                            <button
-                                onClick={() => onAddFurniture(item.path)}
-                                style={styles.itemButton}
-                            >
-                                <span style={styles.icon}>{item.icon}</span>
-                                {item.name}
-                            </button>
-
-                        </div>
-                    ))}
-                </div>
-            )}
-
+        <>
             {isOpen && (
                 <button onClick={onCaptureScreenshot} style={styles.exportButton}>
                     <FiDownload style={{ marginRight: "8px", fontSize: "18px" }} />
-                    Export Image
+                    Export
                 </button>
             )}
-        </div>
+
+            <div style={{
+                ...styles.sidebar,
+                width: isOpen ? "300px" : "60px",
+                padding: isOpen ? "20px" : "10px",
+                alignItems: isOpen ? "flex-start" : "center"
+            }}>
+                <button style={styles.toggleButton} onClick={() => setIsOpen(!isOpen)}>
+                    <FaBars />
+                </button>
+
+                {isOpen && <h2 style={styles.title}>Furniture Library</h2>}
+
+                {isOpen && (
+                    <div style={styles.listContainer}>
+                        {furnitureItems.map(item => (
+                            <div key={item.name} style={styles.itemWrapper}>
+                                <button
+                                    onClick={() => onAddFurniture(item.path)}
+                                    onMouseEnter={() => setHovered(item.name)}
+                                    onMouseLeave={() => setHovered(null)}
+                                    style={{
+                                        ...styles.itemButton,
+                                        backgroundColor: hovered === item.name ? "#a8e6cf" : "#4e5a65",
+                                        color: hovered === item.name ? "#333" : "#fff"
+                                    }}
+                                >
+                                    <span style={styles.icon}>{item.icon}</span>
+                                    {item.name}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
 
@@ -93,23 +88,24 @@ const styles = {
         top: 0,
         left: 0,
         height: "100%",
-        background: "linear-gradient(to bottom, #2c3e50, #34495e)",
+        backgroundColor: "#f5f5f5",
         boxSizing: "border-box",
         overflowY: "auto",
         zIndex: 10,
-        borderRight: "2px solid #79869b",
-        boxShadow: "4px 0px 15px rgba(0, 0, 0, 0.2)",
-        borderRadius: "0px 10px 10px 0px",
+        borderRight: "1px solid #ccc",
+        boxShadow: "4px 0px 12px rgba(0, 0, 0, 0.05)",
+        borderRadius: "0 10px 10px 0",
         fontFamily: "'Roboto', sans-serif",
-        color: "#EEEEEE",
-        transition: "width 0.3s ease-in-out, padding 0.3s ease-in-out"
+        transition: "width 0.3s ease, padding 0.3s ease",
+        padding: "20px"
     },
     title: {
-        textAlign: "center",
-        fontSize: "24px",
-        marginBottom: "20px",
-        fontWeight: "600",
-        letterSpacing: "1px"
+        textAlign: "left",
+        fontSize: "22px",
+        marginBottom: "18px",
+        fontWeight: "bold",
+        color: "#333",
+        paddingLeft: "10px"
     },
     toggleButton: {
         position: "absolute",
@@ -117,58 +113,50 @@ const styles = {
         right: "10px",
         background: "none",
         border: "none",
-        color: "#fff",
-        fontSize: "24px",
+        color: "#333",
+        fontSize: "22px",
         cursor: "pointer"
     },
     listContainer: {
-        marginBottom: "20px",
-        width: "100%"
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px"
     },
-    itemWrapper: {
-        marginBottom: "10px"
-    },
+    itemWrapper: {},
     itemButton: {
         display: "flex",
         alignItems: "center",
         gap: "10px",
-        margin: "5px 0",
+        margin: "6px 0",
         padding: "12px",
         width: "100%",
-        backgroundColor: "#3498db",
-        color: "#fff",
         border: "none",
         borderRadius: "8px",
-        fontSize: "16px",
+        fontSize: "15px",
         cursor: "pointer",
         transition: "background-color 0.3s ease, transform 0.2s ease",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)"
+        boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)"
     },
     icon: {
-        fontSize: "20px"
-    },
-    dimensions: {
-        paddingLeft: "20px",
-        fontSize: "14px",
-        color: "#ddd"
+        fontSize: "18px"
     },
     exportButton: {
-        position: "absolute",
-        bottom: "20px",
-        left: "50%",
-        transform: "translateX(-50%)",
-        padding: "12px 24px",
-        backgroundColor: "#e67e22",
+        position: "fixed",
+        top: "15px",
+        left: "320px",
+        zIndex: 101,
+        padding: "10px 18px",
+        backgroundColor: "#10B981",
         color: "#fff",
         border: "none",
         borderRadius: "8px",
-        fontSize: "16px",
+        fontSize: "15px",
         cursor: "pointer",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-        transition: "background-color 0.3s ease, transform 0.2s ease",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        boxShadow: "0px 3px 8px rgba(0,0,0,0.15)",
+        transition: "background-color 0.3s ease"
     }
 };
 
