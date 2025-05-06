@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-    FaBars, FaBath, FaBed, FaChair, FaCouch, FaDoorClosed, FaImage, FaKitchenSet,
+    FaBars, FaBath, FaBed, FaChair, FaCouch, FaKitchenSet,
     FaLeaf, FaLightbulb, FaRug, FaTable, FaTv
 } from "react-icons/fa6";
 import { FiDownload } from "react-icons/fi";
@@ -19,11 +19,11 @@ const furnitureItems = [
     { name: "Planter", path: "/models/Planter.glb", icon: <FaLeaf /> },
     { name: "Kitchen", path: "/models/Kitchen.glb", icon: <FaKitchenSet /> },
     { name: "Classic Kitchen", path: "/models/Classic Kitchen.glb", icon: <FaKitchenSet /> },
-    { name: "Kitchen Island", path: "/models/Kitchen-Island.glb", icon: <FaKitchen /> },
+    { name: "Kitchen Island", path: "/models/Kitchen-Island.glb", icon: <FaKitchenSet /> },
     { name: "L Kitchen", path: "/models/L-Kitchen.glb", icon: <FaKitchenSet /> },
     { name: "3 Seater Sofa", path: "/models/3Sofa.glb", icon: <FaCouch /> },
     { name: "Tv-Console", path: "/models/Tv-Console.glb", icon: <FaTv /> },
-    { name: "Tv-Console", path: "/models/TV Console2.glb", icon: <FaTv /> },
+    { name: "Tv-Console2", path: "/models/TV Console2.glb", icon: <FaTv /> },
     { name: "Pendant-Light", path: "/models/PendantLight.glb", icon: <FaLightbulb /> },
     { name: "Sofa", path: "/models/SofaChair.glb", icon: <FaCouch /> },
     { name: "Couch", path: "/models/Couch.glb", icon: <FaCouch /> },
@@ -39,8 +39,8 @@ const furnitureItems = [
     { name: "Round Dining Table", path: "/models/RoundDinning.glb", icon: <FaTable /> },
     { name: "DressingTable", path: "/models/DressingTable.glb", icon: <FaTable /> },
     { name: "Vanity", path: "/models/Vanity.glb", icon: <FaBath /> },
-    { name: "Image Portrait", path: "/models/Portraits.glb", icon: <FaImage /> },
-    { name: "Wood Door", path: "/models/wood Door.glb", icon: <FaDoorClosed /> },
+    { name: "Image Portrait", path: "/models/Portraits.glb", icon: <FaBath /> },
+
 
 
 
