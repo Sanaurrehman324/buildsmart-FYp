@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-    FaBars, FaBath, FaBed, FaChair, FaCouch, FaKitchenSet,
+    FaBars, FaBath, FaBed, FaChair, FaCouch, FaDoorClosed, FaImage, FaKitchenSet,
     FaLeaf, FaLightbulb, FaRug, FaTable, FaTv
 } from "react-icons/fa6";
 import { FiDownload } from "react-icons/fi";
@@ -8,14 +8,22 @@ import { FiDownload } from "react-icons/fi";
 const furnitureItems = [
     { name: "Bed", path: "/models/king_bed.glb", icon: <FaBed /> },
     { name: "Wood-Bed", path: "/models/WoodenBed.glb", icon: <FaBed /> },
+    { name: "Wood-Bed2", path: "/models/WoodBed.glb", icon: <FaBed /> },
     { name: "ModernBed", path: "/models/ModernBed.glb", icon: <FaBed /> },
+    { name: "Classic Bed", path: "/models/Classic Bed.glb", icon: <FaBed /> },
+    { name: "Classic Bed-2", path: "/models/ClassicalBed.glb", icon: <FaBed /> },
+    { name: "FirePlace Built-in", path: "/models/Fireplace Builtin.glb", icon: <FaBed /> },
     { name: "Chandelier", path: "/models/Chandelier.glb", icon: <FaLightbulb /> },
     { name: "Chandelier2", path: "/models/Chandelier2.glb", icon: <FaLightbulb /> },
     { name: "Chair", path: "/models/furniture_sofa.glb", icon: <FaChair /> },
     { name: "Planter", path: "/models/Planter.glb", icon: <FaLeaf /> },
     { name: "Kitchen", path: "/models/Kitchen.glb", icon: <FaKitchenSet /> },
+    { name: "Classic Kitchen", path: "/models/Classic Kitchen.glb", icon: <FaKitchenSet /> },
+    { name: "Kitchen Island", path: "/models/Kitchen-Island.glb", icon: <FaKitchen /> },
+    { name: "L Kitchen", path: "/models/L-Kitchen.glb", icon: <FaKitchenSet /> },
     { name: "3 Seater Sofa", path: "/models/3Sofa.glb", icon: <FaCouch /> },
     { name: "Tv-Console", path: "/models/Tv-Console.glb", icon: <FaTv /> },
+    { name: "Tv-Console", path: "/models/TV Console2.glb", icon: <FaTv /> },
     { name: "Pendant-Light", path: "/models/PendantLight.glb", icon: <FaLightbulb /> },
     { name: "Sofa", path: "/models/SofaChair.glb", icon: <FaCouch /> },
     { name: "Couch", path: "/models/Couch.glb", icon: <FaCouch /> },
@@ -23,12 +31,24 @@ const furnitureItems = [
     { name: "CoffeeTable", path: "/models/CoffeeTable.glb", icon: <FaTable /> },
     { name: "Table", path: "/models/Table.glb", icon: <FaTable /> },
     { name: "Rug", path: "/models/Rug.glb", icon: <FaRug /> },
+    { name: "Round Rug", path: "/models/Round_Rug.glb", icon: <FaRug /> },
     { name: "Curtain", path: "/models/Curtain.glb", icon: <FaRug /> },
     { name: "Curtain2", path: "/models/Curtain2.glb", icon: <FaRug /> },
     { name: "DinningTable", path: "/models/Dinning Table.glb", icon: <FaTable /> },
     { name: "Dining Table", path: "/models/Dinning.glb", icon: <FaTable /> },
+    { name: "Round Dining Table", path: "/models/RoundDinning.glb", icon: <FaTable /> },
     { name: "DressingTable", path: "/models/DressingTable.glb", icon: <FaTable /> },
     { name: "Vanity", path: "/models/Vanity.glb", icon: <FaBath /> },
+    { name: "Image Portrait", path: "/models/Portraits.glb", icon: <FaImage /> },
+    { name: "Wood Door", path: "/models/wood Door.glb", icon: <FaDoorClosed /> },
+
+
+
+
+
+
+
+
 ];
 
 const Sidebar = ({ onAddFurniture, onCaptureScreenshot }) => {

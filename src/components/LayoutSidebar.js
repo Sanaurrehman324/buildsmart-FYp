@@ -3,20 +3,28 @@ import "./LayoutSidebar.css"; // ✅ Optional: use if you want separate CSS
 
 const layouts = [
     {
-        name: "Layout 1",
-        modelPath: "/models/Layout.glb",
+        name: "Evergreen Duplex Residence",
+        modelPath: "/models/jaime.glb",
         icon: "🏠",
     },
     {
-        name: "Layout 2",
-        modelPath: "/models/layout2.glb",
+        name: "Luxury Classical Villa",
+        modelPath: "/models/mdab.glb",
         icon: "🏡",
     },
     {
-        name: "Layout 3",
-        modelPath: "/models/layout3.glb",
+        name: "Modern Appartment Interior Layout",
+        modelPath: "/models/Hamisha.glb",
         icon: "🏢",
+
     },
+    {
+        name: "Contemporary House Layout",
+        modelPath: "/models/Allysa.glb",
+        icon: "🏢",
+
+    },
+
 ];
 
 const LayoutSidebar = ({ onSelectLayout }) => {

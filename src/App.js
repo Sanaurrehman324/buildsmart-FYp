@@ -48,7 +48,7 @@ function App() {
     const renderer = rendererRef.current;
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0xffffff);
+    renderer.setClearColor(0x999999);
     document.body.appendChild(renderer.domElement);
 
     camera.position.set(0, 5, 15);
@@ -69,7 +69,7 @@ function App() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+    const directionalLight = new THREE.DirectionalLight(0xf1f1f1f1, 3);
     directionalLight.position.set(10, 10, 5);
     scene.add(directionalLight);
 
@@ -226,6 +226,7 @@ function App() {
         model.position.set(0, -1, 0);
         model.scale.set(1, 1, 1);
         scene.add(model);
+        console.log("Loading layout:", modelPath);
       },
       undefined,
       (error) => console.error("Failed to load layout:", error)
