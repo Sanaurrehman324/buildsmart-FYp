@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./LayoutSidebar.css"; // ✅ Optional: use if you want separate CSS
+import "./LayoutSidebar.css"; // ✅ Optional
 
 const layouts = [
     {
@@ -16,19 +16,22 @@ const layouts = [
         name: "Modern Appartment Interior Layout",
         modelPath: "/models/Hamisha.glb",
         icon: "🏢",
-
     },
     {
         name: "Contemporary House Layout",
         modelPath: "/models/Allysa.glb",
         icon: "🏢",
-
     },
-
 ];
 
 const LayoutSidebar = ({ onSelectLayout }) => {
     const [isOpen, setIsOpen] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // Filter layouts based on search query (case-insensitive)
+    const filteredLayouts = layouts.filter((layout) =>
+        layout.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <div className={`layout-sidebar ${isOpen ? "open" : "closed"}`}>
@@ -39,8 +42,15 @@ const LayoutSidebar = ({ onSelectLayout }) => {
             {isOpen && (
                 <div className="sidebar-content">
                     <h3>🗂 Choose a Layout</h3>
+                    <input
+                        type="text"
+                        className="search-bar"
+                        placeholder="Search layouts..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                     <ul className="layout-list">
-                        {layouts.map((layout) => (
+                        {filteredLayouts.map((layout) => (
                             <li
                                 key={layout.name}
                                 className="layout-item"
@@ -50,6 +60,9 @@ const LayoutSidebar = ({ onSelectLayout }) => {
                                 <span>{layout.name}</span>
                             </li>
                         ))}
+                        {filteredLayouts.length === 0 && (
+                            <li className="no-results">No layouts found.</li>
+                        )}
                     </ul>
                 </div>
             )}
