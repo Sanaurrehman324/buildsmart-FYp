@@ -40,20 +40,16 @@ const furnitureItems = [
     { name: "DressingTable", path: "/models/DressingTable.glb", icon: <FaTable /> },
     { name: "Vanity", path: "/models/Vanity.glb", icon: <FaBath /> },
     { name: "Image Portrait", path: "/models/Portraits.glb", icon: <FaBath /> },
-
-
-
-
-
-
-
-
-
 ];
 
 const Sidebar = ({ onAddFurniture, onCaptureScreenshot }) => {
     const [isOpen, setIsOpen] = useState(true);
     const [hovered, setHovered] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredItems = furnitureItems.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <>
@@ -77,8 +73,18 @@ const Sidebar = ({ onAddFurniture, onCaptureScreenshot }) => {
                 {isOpen && <h2 style={styles.title}>Furniture Library</h2>}
 
                 {isOpen && (
+                    <input
+                        type="text"
+                        placeholder="Search furniture..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={styles.searchInput}
+                    />
+                )}
+
+                {isOpen && (
                     <div style={styles.listContainer}>
-                        {furnitureItems.map(item => (
+                        {filteredItems.map(item => (
                             <div key={item.name} style={styles.itemWrapper}>
                                 <button
                                     onClick={() => onAddFurniture(item.path)}
@@ -122,7 +128,7 @@ const styles = {
     title: {
         textAlign: "left",
         fontSize: "22px",
-        marginBottom: "18px",
+        marginBottom: "12px",
         fontWeight: "bold",
         color: "#333",
         paddingLeft: "10px"
@@ -136,6 +142,16 @@ const styles = {
         color: "#333",
         fontSize: "22px",
         cursor: "pointer"
+    },
+    searchInput: {
+        width: "90%",
+        padding: "8px 12px",
+        marginBottom: "16px",
+        fontSize: "15px",
+        borderRadius: "6px",
+        border: "1px solid #ccc",
+        outline: "none",
+        boxShadow: "0px 2px 4px rgba(0,0,0,0.05)"
     },
     listContainer: {
         width: "100%",
